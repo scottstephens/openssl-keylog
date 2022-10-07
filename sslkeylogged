@@ -15,5 +15,6 @@ if [[ -z $SSLKEYLOGFILE && -z $HOOKED_SSLKEYLOGFILE ]]; then
 fi
 
 export HOOKED_SSLKEYLOGFILE
-
+echo $HOOKED_SSLKEYLOGFILE
+echo $LD_PRELOAD
 exec "$@"

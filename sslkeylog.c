@@ -28,8 +28,6 @@ void *real_dlsym(void *handle, const char *name);
 
 static void init_keylog_file(void)
 {
-    char filename_pid[MAX_PATH];
-
     if (keylog_file_fd >= 0)
         return;
 
@@ -43,9 +41,7 @@ static void init_keylog_file(void)
     size_t filename_len = strlen(filename);
     if (filename_len < MAX_PATH - 12)
     {
-        strcpy(filename_pid, filename);
-        snprintf(&filename_pid[filename_len], MAX_PATH - filename_len, ".%d", (int)getpid());
-        keylog_file_fd = open(filename_pid, O_WRONLY | O_APPEND | O_CREAT, 0644);
+        keylog_file_fd = open(filename, O_WRONLY | O_APPEND | O_CREAT, 0644);
         if (keylog_file_fd >= 0 && lseek(keylog_file_fd, 0, SEEK_END) == 0)
         {
             /* file is opened successfully and there is no data (pos == 0) */
