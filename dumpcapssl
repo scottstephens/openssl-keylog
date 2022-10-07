@@ -23,14 +23,13 @@ fi
 echo "*** SSL keys: ${HOOKED_SSLKEYLOGFILE} ***"
 
 CAPTURE_FILE="${HOOKED_SSLKEYLOGFILE%.*}.pcapng"
-TMP_CAPTURE_FILE=$(mktemp -t "dumpcapssl-XXXXXXXX.tmp.pcapng")
+TMP_CAPTURE_FILE=$(sudo mktemp -t "dumpcapssl-XXXXXXXX.tmp.pcapng")
 echo "*** Capture : ${CAPTURE_FILE} from interface: ${INTERFACE} ***"
 
 rm -f ${HOOKED_SSLKEYLOGFILE}
 rm -f ${CAPTURE_FILE}
 
 echo "*** Starting Capture ***"
-sudo chown root: ${TMP_CAPTURE_FILE}
 sudo setsid bash -c "echo \$\$ > ${CAPTURE_FILE}.pid; exec dumpcap -q -i ${INTERFACE} -w ${TMP_CAPTURE_FILE}" &
 
 sleep 1
