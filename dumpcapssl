@@ -1,9 +1,9 @@
 #!/bin/bash
 
 if [[ -z $1 ]]; then
-    echo "Usage: dumpcapssl <INTERFACE> <COMMAND> [COMMAND_ARGS]..."
+    echo "Usage: dumpcapssl <INTERFACE> <FILTER> <COMMAND> [COMMAND_ARGS]..."
     echo 
-    echo "Example: dumpcapssl eth0 curl https://www.google.com/"
+    echo "Example: dumpcapssl eth0 "host google.com" curl https://www.google.com/"
     echo 
     echo "Uses HOOKED_SSLKEYLOGFILE or SSLKEYLOGFILE if set, otherwise generates random temporary paths."
     echo
@@ -11,6 +11,7 @@ if [[ -z $1 ]]; then
 fi
 
 INTERFACE=$1
+FILTER=$2
 
 if [[ -n ${SSLKEYLOGFILE} ]]; then
     HOOKED_SSLKEYLOGFILE="${SSLKEYLOGFILE}"
@@ -30,7 +31,7 @@ rm -f ${HOOKED_SSLKEYLOGFILE}
 rm -f ${CAPTURE_FILE}
 
 echo "*** Starting Capture ***"
-sudo setsid bash -c "echo \$\$ > ${CAPTURE_FILE}.pid; exec dumpcap -q -i ${INTERFACE} -w ${TMP_CAPTURE_FILE}" &
+sudo setsid bash -c "echo \$\$ > ${CAPTURE_FILE}.pid; exec dumpcap -q -i ${INTERFACE} -f \"${FILTER}\" -w ${TMP_CAPTURE_FILE}" &
 
 sleep 1
 export HOOKED_SSLKEYLOGFILE
@@ -39,7 +40,7 @@ int_trap() {
     echo "*** Command Interrupted ***"
 }
 trap int_trap INT
-sslkeylogged "${@:2}"
+sslkeylogged "${@:3}"
 RESULT=$?
 echo "*** Command Stopped ***"
 sleep 1
